@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from .models import JobPost
 from .scraper_indeed import scrape as execute_scrape
 from django.db.models import Count
+from django.http import HttpResponse
+import csv
 
 # Create your views here.
 
@@ -16,19 +18,27 @@ def scrape(request):
     return JsonResponse({"message": "gelukt"})
 
 
+
+def export_scraper_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="scraper_indeed.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['alles', 'bedrijf', 'created_at', 'id', 'link', 'plaats', 'titel', 'updated_at', 'zoekterm'])
+
+    scraper_data = JobPost.objects.all().values_list('alles', 'bedrijf', 'created_at', 'id', 'link', 'plaats', 'titel', 'updated_at', 'zoekterm')
+    for scrape in scraper_data:
+        writer.writerow(scrape)
+    return response
+
+
 def pie_chart(request):
     labels = []
     data = []
 
-        
-
-        
-
-    # queryset = JobPost.objects.all()
-
-    queryset = JobPost.objects.values('plaats').order_by('plaats').annotate(count=Count('plaats'))
+    queryset = JobPost.objects.values('zoekterm').order_by('zoekterm').annotate(count=Count('zoekterm'))
     for job in queryset:
-        labels.append(job['plaats'])
+        labels.append(job['zoekterm'])
         data.append(job['count'])
 
 
@@ -36,6 +46,3 @@ def pie_chart(request):
         'labels': labels,
         'data': data,
     })
-
-
-

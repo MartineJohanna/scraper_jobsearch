@@ -18,40 +18,45 @@ from indeed_vacatures.scraper_functies import *
 
 
 def scrape():
+    zoekterm = ['data+engineer', 'data+scientist']
+
 
     # scrapen van elke pagina op zoekterm data engineering
-    for i in range(1, 2):
-        xrnd = np.random.uniform(3, 6)
-        time.sleep(xrnd)    
+    for j in zoekterm:
+        for i in range(1, 100000):
+            xrnd = np.random.uniform(3, 6)
+            time.sleep(xrnd)    
 
-        page = requests.get('https://www.indeed.nl/jobs?q=data+engineer&l=nederland&start='+ str(i))
-        soup = get_soup(page.text)
-        divs = soup.find_all(name="div", attrs={"class":"row"})
-        
-        if(len(divs) == 0):
-            break
-
-        test = []
-
-        for div in divs:
-            print(div)
-            scrape_data = dict()
-            scrape_data['titel'] = zoek_titel(div)
-            scrape_data['bedrijf'] = zoek_bedrijf(div)
-            scrape_data['plaats'] = zoek_locatie(div)
-            scrape_data['link'] = ('https://www.indeed.nl/jobs?q=data+engineer&l=nederland&start=' + str(zoek_link(div)))
-            page = requests.get('http://www.indeed.nl/' + zoek_link(div))
+            page = requests.get('https://www.indeed.nl/jobs?q=' + j + '&l=nederland&start='+ str(i))
             soup = get_soup(page.text)
-            scrape_data['alles'] = zoek_alles(soup)
-            test.append(scrape_data)
+            divs = soup.find_all(name="div", attrs={"class":"row"})
+            
+            if(len(divs) == 0):
+                break
 
-        for job in test:
-            print("Saving" + job['titel'])
-            job_post = JobPost(
-                titel = job['titel'],
-                bedrijf = job['bedrijf'],
-                plaats = job['plaats'],
-                link = job['link'],
-                alles = job['alles'])
-            job_post.save()
-                
+            test = []
+
+            for div in divs:
+                print(div)
+                scrape_data = dict()
+                scrape_data['titel'] = zoek_titel(div)
+                scrape_data['zoekterm'] = str(j)
+                scrape_data['bedrijf'] = zoek_bedrijf(div)
+                scrape_data['plaats'] = zoek_locatie(div)
+                scrape_data['link'] = ('https://www.indeed.nl/jobs?q=data+engineer&l=nederland&start=' + str(zoek_link(div)))
+                page = requests.get('http://www.indeed.nl/' + zoek_link(div))
+                soup = get_soup(page.text)
+                scrape_data['alles'] = zoek_alles(soup)
+                test.append(scrape_data)
+
+            for job in test:
+                print("Saving" + job['titel'])
+                job_post = JobPost(
+                    titel = job['titel'],
+                    zoekterm = job['zoekterm'],
+                    bedrijf = job['bedrijf'],
+                    plaats = job['plaats'],
+                    link = job['link'],
+                    alles = job['alles'])
+                job_post.save()
+                    
