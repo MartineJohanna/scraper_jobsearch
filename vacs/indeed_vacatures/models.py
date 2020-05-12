@@ -1,4 +1,5 @@
 import datetime
+import django_tables2 as tables
 
 from django.db import models
 
@@ -15,6 +16,10 @@ class JobPost(models.Model):
 
     def __str__(self):
         return self.titel
+
+
+
+
 
 
 

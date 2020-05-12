@@ -23,7 +23,7 @@ def scrape():
 
     # scrapen van elke pagina op zoekterm data engineering
     for j in zoekterm:
-        for i in range(1, 100000):
+        for i in range(1, 2):
             xrnd = np.random.uniform(3, 6)
             time.sleep(xrnd)    
 
@@ -43,7 +43,7 @@ def scrape():
                 scrape_data['zoekterm'] = str(j)
                 scrape_data['bedrijf'] = zoek_bedrijf(div)
                 scrape_data['plaats'] = zoek_locatie(div)
-                scrape_data['link'] = ('https://www.indeed.nl/jobs?q=data+engineer&l=nederland&start=' + str(zoek_link(div)))
+                scrape_data['link'] = ('https://www.indeed.nl/' + str(zoek_link(div)))
                 page = requests.get('http://www.indeed.nl/' + zoek_link(div))
                 soup = get_soup(page.text)
                 scrape_data['alles'] = zoek_alles(soup)
