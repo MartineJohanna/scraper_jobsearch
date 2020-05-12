@@ -29,7 +29,6 @@ def scrape():
         divs = soup.find_all(name="div", attrs={"class":"row"})
         
         if(len(divs) == 0):
-            print(' hoi')
             break
 
         test = []
