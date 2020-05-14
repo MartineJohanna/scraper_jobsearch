@@ -39,7 +39,6 @@ def export_scraper_csv(request):
     writer = csv.writer(response)
     writer.writerow( ['id', 'titel', 'bedrijf', 'plaats', 'zoekterm','alles', 'link', 'created_at', 'updated_at'])
 
-   
 
     scraper_data = JobPost.objects.all().values_list('id', 'titel', 'bedrijf', 'plaats', 'zoekterm','alles', 'link', 'created_at', 'updated_at')
     for scrape in scraper_data:
