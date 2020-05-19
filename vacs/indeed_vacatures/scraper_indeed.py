@@ -12,14 +12,14 @@ import re, html
 import bs4
 from bs4 import BeautifulSoup
 from indeed_vacatures.models import JobPost
-from indeed_vacatures.scraper_functies import indeed
+from indeed_vacatures.scraper_functies import indeed, monsterboard, jobbird
 
 
 
 
 def scrape():
     zoekterm = ['data+engineer', 'data+scientist']
-    site = ['indeed']
+    site = ['indeed','monsterboard', 'jobbird']
 
 
 
@@ -31,14 +31,19 @@ def scrape():
 
                 if s == 'indeed':
                     scraper = indeed()
-            
 
+                if s == 'monsterboard':
+                    scraper = monsterboard()
+
+                if s == 'jobbird':
+                    scraper = jobbird()
+            
 
                 xrnd = np.random.uniform(3, 6)
                 time.sleep(xrnd)    
 
                 soup = scraper.get_soup(page=scraper.get_page(i,j), i=i, j=j)
-                divs = soup.find_all(name="div", attrs={"class":"row"})
+                divs = scraper.get_divs(soup)
                 
                 if(len(divs) == 0):
                     break

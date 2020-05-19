@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
 
 
 #import packages
@@ -17,8 +13,6 @@ import bs4
 import json
 from bs4 import BeautifulSoup
 
-
-# In[10]:
 
 
 pd.set_option('display.max_rows', None)
