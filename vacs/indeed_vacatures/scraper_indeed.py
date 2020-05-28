@@ -62,14 +62,18 @@ def scrape():
                     test.append(scrape_data)
 
                 for job in test:
-                    print("Saving" + job['titel'])
-                    job_post = JobPost(
-                        titel = job['titel'],
-                        zoekterm = job['zoekterm'],
-                        bedrijf = job['bedrijf'],
-                        plaats = job['plaats'],
-                        link = job['link'],
-                        alles = job['alles'])
-                job_post, __ = JobPost.objects.get_or_create(link = JobPost('link'))
+                    # print("Saving " + job['titel'])
+                    obj, created  = JobPost.objects.update_or_create(link=job['link'], defaults = {
+                        'titel': job['titel'],
+                        'zoekterm': job['zoekterm'],
+                        'bedrijf': job['bedrijf'],
+                        'plaats': job['plaats'],
+                        'link': job['link'],
+                        'alles': job['alles']
+                    })
+                    if created:
+                        print('Created ' + obj.titel)
+                    else:
+                        print('Updated ' + obj.titel)
 
                     
