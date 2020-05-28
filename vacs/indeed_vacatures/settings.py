@@ -16,6 +16,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -39,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'indeed_vacatures',
     'django_tables2',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -72,6 +76,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'scrapert.wsgi.application'
 
 
+
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -83,7 +89,7 @@ DATABASES = {
 }
 
 
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 
 

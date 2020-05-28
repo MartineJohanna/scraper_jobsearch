@@ -19,12 +19,12 @@ from indeed_vacatures.scraper_functies import indeed, monsterboard, jobbird
 
 def scrape():
     zoekterm = ['data+engineer', 'data+scientist']
-    site = ['indeed','monsterboard', 'jobbird']
+    site = ['monsterboard']
 
 
 
 
-    # scrapen van elke pagina op zoekterm data engineering
+    # scrapen van de vacaturesites
     for s in site:
         for j in zoekterm:
             for i in range(1, 2):
@@ -50,6 +50,7 @@ def scrape():
 
                 test = []
 
+
                 for div in divs:
                     scrape_data = dict()
                     scrape_data['titel'] = scraper.zoek_titel(div)
@@ -69,5 +70,6 @@ def scrape():
                         plaats = job['plaats'],
                         link = job['link'],
                         alles = job['alles'])
-                    job_post.save()
-                        
+                job_post, __ = JobPost.objects.get_or_create(link = JobPost('link'))
+
+                    

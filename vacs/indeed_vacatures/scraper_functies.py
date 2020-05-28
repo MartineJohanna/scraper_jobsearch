@@ -17,7 +17,6 @@ from indeed_vacatures.models import JobPost
 
 
 
-
 class indeed:
     
 
@@ -104,7 +103,7 @@ class monsterboard:
 
     # zoek naam van bedrijf
     def zoek_bedrijf(self,div):
-        comp = div.find("a",attrs={"class":"name"})
+        comp = div.find(attrs={"class":"company"})
         if comp is not None:
             return comp.get_text()
         else:
@@ -169,26 +168,28 @@ class jobbird:
     def zoek_locatie(self,div):
         places = div.find_all('span', 'job-result__place')
         loc = []
-        for place in places:
-            loc = ''.join(place.get_text().split())[:-6]
-            loc = loc.replace('(', '')
+        if places is not None:
+            for place in places:
+                loc = ''.join(place.get_text().split())[:-6]
+                loc = loc.replace('(', '')
+                loc = " ".join(loc.split())
+        else:
+            loc = places
         return loc
 
     #zoek naam van bedrijf van de vacature
     def zoek_bedrijf(self,div):
         bedrijven = div.find_all('span', 'dashed-list__item')
+        alles = []
         for bedrijf in bedrijven:
-            alles = []
             test = bedrijf.get_text()
             test = test.replace('Premium', '')
             test = test.replace('Nieuw', '')
             test = test.rstrip()
             alles.append(test)
-            alles = ''.join(str(alles).split())[2:-4]
-            if alles is not None:
-                return alles
-            else:
-                return 'geen bedrijf'
+        alles = ''.join(str(alles).split())[7:-2]
+        return alles
+
 
     # zoek link van vacature
     def zoek_link(self,div):
