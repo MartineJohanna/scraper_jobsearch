@@ -38,10 +38,10 @@ class ScraperListView(SingleTableView):
     table_class = ScraperTable
     template_name = 'indeed_vacatures/table.html'
 
-# def index(request):
-#     job_posts = JobPost.objects.all()
-#     aantal = JobPost.objects.all().count()
-#     return render(request,'indeed_vacatures/index.html', {'jobPosts': job_posts, 'aantal': aantal})
+def index(request):
+    job_posts = JobPost.objects.all()
+    aantal = JobPost.objects.all().count()
+    return render(request,'indeed_vacatures/index.html', {'jobPosts': job_posts, 'aantal': aantal})
 
 def scrape(request):
     print('Ik begin nu')
@@ -121,7 +121,7 @@ def export_scraper_csv(request):
 #     return render(request, "indeed_vacatures/index.html", context={'app': app})
 
 
-def index(request):
+def dashboard(request):
 
     labels_zoekterm = []
     data_zoekterm = []
@@ -196,6 +196,6 @@ def index(request):
 
     app.run_server(debug=True, use_reloader=False) 
 
-    return render(request, "indeed_vacatures/index.html", context={'app': app})
+    return render(request, "indeed_vacatures/dashboard.html", context={'app': app})
 
 
