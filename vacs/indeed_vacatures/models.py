@@ -12,6 +12,7 @@ class JobPost(models.Model):
     bedrijf = models.CharField(max_length=350, default="")
     plaats = models.CharField(max_length=350, default="")
     link = models.CharField(max_length=350,default="")
+    site = models.CharField(max_length=350, default="")
     alles = models.CharField(max_length=50000,default="")
 
     def __str__(self):

@@ -1,32 +1,31 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import JobPost
-from .scraper_indeed import scrape as execute_scrape
-from django.db.models import Count
-from django.http import HttpResponse
 import csv
-import pandas as pd
-from django_pandas.io import read_frame
-from django.views.generic import ListView
-from django_tables2 import SingleTableView
-from .tables import ScraperTable
-from plotly.offline import plot
-from plotly.graph_objs import Scatter
-from plotly.graph_objs import Bar
-import plotly.io as pio
-import plotly.graph_objects as go
-import plotly.express as px
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from plotly.subplots import make_subplots
-import plotly
-from .naar_coordinaten import coord
-import numpy as np
 import time
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import numpy as np
+import pandas as pd
+import plotly
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+from django.db.models import Count
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.views.generic import ListView
+from django_pandas.io import read_frame
+from django_tables2 import SingleTableView
+from plotly.graph_objs import Bar, Scatter
+from plotly.offline import plot
+from plotly.subplots import make_subplots
+
+from .models import JobPost
+from .naar_coordinaten import coord
+from .scraper_indeed import scrape as execute_scrape
+from .skills_vacatures import skills
+from .tables import ScraperTable
+
 # from plotly import choropleth_mapbox
 
 
@@ -39,11 +38,50 @@ class ScraperListView(SingleTableView):
     template_name = 'indeed_vacatures/table.html'
 
 def index(request):
-    job_posts = JobPost.objects.all()
-    aantal = JobPost.objects.all().count()
-    return render(request,'indeed_vacatures/index.html', {'jobPosts': job_posts, 'aantal': aantal})
+
+    
+
+    filter_woorden = skills()
+
+    keys_scientist = filter_woorden[0].keys()
+    values_scientist = filter_woorden[0].values()
+
+    
+    keys_engineer = filter_woorden[1].keys()
+    values_engineer = filter_woorden[1].values()
+
+    external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+    app.layout = html.Div(children=[
+        html.H1(children='Hello Dash'),
+
+        html.Div(children='''
+            Dash: A web application framework for Python.
+        '''),
+
+        dcc.Graph(
+            id='example-graph',
+            figure={
+                'data': [
+                    {'x': [k for k in keys_scientist], 'y': [float(v) for v in values_scientist], 'type': 'bar', 'name': 'data scientist'},
+                    {'x': [k for k in keys_engineer], 'y': [float(v) for v in values_engineer], 'type': 'bar', 'name': u'data engineer'},
+                ],
+                'layout': {
+                    'title': 'Skills'
+                }
+            }
+        )
+    ])
+
+    app.run_server(debug=True, use_reloader=False) 
+
+    # aantal = JobPost.objects.all().count()
+    return render(request, "indeed_vacatures/index.html", context={'app': app})
 
 def scrape(request):
+
     print('Ik begin nu')
     execute_scrape()
     return JsonResponse({"message": "De site is nu gescraped"})
@@ -137,6 +175,22 @@ def dashboard(request):
         labels_bedrijf.append(bedrijf['bedrijf'])
         data_bedrijf.append(bedrijf['count'])
 
+
+    labels_site = []
+    data_site = []
+    queryset_site = JobPost.objects.values('site').order_by('site').annotate(count=Count('site'))
+    for s in queryset_site:
+        labels_site.append(s['site'])
+        data_site.append(s['count'])
+
+
+    labels_plaats = []
+    data_plaats = []
+    queryset_plaats = JobPost.objects.values('plaats').order_by('plaats').annotate(count=Count('plaats'))
+    for p in queryset_plaats:
+        labels_plaats.append(p['plaats'])
+        data_plaats.append(p['count'])
+
     # lon_plaats = []
     # lat_plaats = []
     # labels_plaats=[]
@@ -154,19 +208,29 @@ def dashboard(request):
     #     lat_plaats.append(latt)
 
 
+    filter_woorden = skills()
+
+    keys_scientist = filter_woorden[0].keys()
+    values_scientist = filter_woorden[0].values()
+
+    
+    keys_engineer = filter_woorden[1].keys()
+    values_engineer = filter_woorden[1].values()
+
 
 
     
     fig = make_subplots(
-        rows=2, cols=2,
-        specs=[[{"type": "bar"}, {"type": "barpolar"}],
-            [{"type": "pie"}, {"type": "scatter3d"}]],
+        rows=3, cols=2,
+        specs=[[{"type": "bar"}, {"type": "pie"}],
+            [{"type": "pie"}, {"type": "bar"}],
+            [{"type": "bar"}, {"type": "bar"}]],
     )
 
     fig.add_trace(go.Bar(x=labels_bedrijf,y=data_bedrijf),
                 row=1, col=1)
 
-    fig.add_trace(go.Barpolar(theta=[0, 45, 90], r=[2, 3, 1]),
+    fig.add_trace(go.Pie(labels=labels_site, values=data_site),
                 row=1, col=2)
 
     # fig.add_trace(go.Figure(data=go.Scattergeo(
@@ -182,11 +246,19 @@ def dashboard(request):
     fig.add_trace(go.Pie(labels=labels_zoekterm, values=data_zoekterm),
                 row=2, col=1)
 
-    fig.add_trace(go.Scatter3d(x=[2, 3, 1], y=[0, 0, 0], 
-                            z=[0.5, 1, 2], mode="lines"),
-                row=2, col=2)
+    fig.add_trace(go.Bar(x=labels_plaats,y=data_plaats),
+                row=2, col=2).update_xaxes(categoryorder="total descending")
 
-    fig.update_layout(height=1000, width=1000,
+    
+    fig.add_trace(go.Bar(x=[k for k in keys_engineer],y=[float(v) for v in values_engineer]),
+                row=3, col=1).update_xaxes(categoryorder="total descending")
+
+
+    fig.add_trace(go.Bar(x=[k for k in keys_scientist],y=[float(v) for v in values_scientist]),
+                row=3, col=2).update_xaxes(categoryorder="total descending")
+
+
+    fig.update_layout(height=2000, width=1700,
                   title_text="Scraper vacaturesites visualisaties")
 
     app = dash.Dash()
@@ -197,5 +269,4 @@ def dashboard(request):
     app.run_server(debug=True, use_reloader=False) 
 
     return render(request, "indeed_vacatures/dashboard.html", context={'app': app})
-
 
