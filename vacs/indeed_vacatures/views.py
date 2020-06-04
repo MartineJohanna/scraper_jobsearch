@@ -26,10 +26,6 @@ from .scraper_indeed import scrape as execute_scrape
 from .skills_vacatures import skills
 from .tables import ScraperTable
 
-# from plotly import choropleth_mapbox
-
-
-
 # Create your views here.
 
 class ScraperListView(SingleTableView):
@@ -101,64 +97,6 @@ def export_scraper_csv(request):
     return response
 
 
-# def pie_chart(request):
-#     labels = []
-#     data = []
-
-#     queryset = JobPost.objects.values('zoekterm').order_by('zoekterm').annotate(count=Count('zoekterm'))
-#     for job in queryset:
-#         labels.append(job['zoekterm'])
-#         data.append(job['count'])
-
-
-#     return render(request, 'indeed_vacatures/pie_chart.html', {
-#         'labels': labels,
-#         'data': data,
-#     })
-
-
-
-
-# def index(request):
-#     labels = []
-#     data = []
-
-#     queryset = JobPost.objects.values('bedrijf').order_by('bedrijf').annotate(count=Count('bedrijf'))
-#     for job in queryset:
-#         labels.append(job['bedrijf'])
-#         data.append(job['count'])
-
-
-#     fig = px.bar(y=data, x=labels)
-#     plot_div = fig.show()
-
-#     return render(request, "indeed_vacatures/index.html", context={'plot_div': plot_div})
-
-
-
-# def pie_chart(request):
-#     labels = []
-#     data = []
-#     queryset = JobPost.objects.values('zoekterm').order_by('zoekterm').annotate(count=Count('zoekterm'))
-#     for job in queryset:
-#         labels.append(job['zoekterm'])
-#         data.append(job['count'])
-
-
-#     fig = px.pie(values=data, names=labels)
-
-
-    
-#     app = dash.Dash()
-#     app.layout = html.Div([
-#         dcc.Graph(figure=fig)
-#     ])
-
-#     app.run_server(debug=True, use_reloader=False) 
-
-#     return render(request, "indeed_vacatures/index.html", context={'app': app})
-
-
 def dashboard(request):
 
     labels_zoekterm = []
@@ -191,23 +129,6 @@ def dashboard(request):
         labels_plaats.append(p['plaats'])
         data_plaats.append(p['count'])
 
-    # lon_plaats = []
-    # lat_plaats = []
-    # labels_plaats=[]
-    # data_plaats = []
-    # queryset_plaats = JobPost.objects.values('plaats').order_by('plaats').annotate(count=Count('plaats'))
-    # for plaats in queryset_plaats:
-    #     xrnd = np.random.uniform(3, 6)
-    #     time.sleep(xrnd)  
-    #     labels_plaats.append(coord(plaats['plaats']))
-    #     data_plaats.append(plaats['count'])
-
-    #     latt = [x.strip() for x in labels_plaats[-1].split(',')][0]
-    #     lon = latt = [x.strip() for x in labels_plaats[-1].split(',')][1]
-    #     lon_plaats.append(lon)
-    #     lat_plaats.append(latt)
-
-
     filter_woorden = skills()
 
     keys_scientist = filter_woorden[0].keys()
@@ -216,8 +137,6 @@ def dashboard(request):
     
     keys_engineer = filter_woorden[1].keys()
     values_engineer = filter_woorden[1].values()
-
-
 
     
     fig = make_subplots(
@@ -232,15 +151,6 @@ def dashboard(request):
 
     fig.add_trace(go.Pie(labels=labels_site, values=data_site),
                 row=1, col=2)
-
-    # fig.add_trace(go.Figure(data=go.Scattergeo(
-    #         lon = lon_plaats,
-    #         lat = lat_plaats,
-    #         mode = 'markers',
-    #         marker_color = data_plaats,
-    #         geo_scope='nl'
-    #         )))
-
             
 
     fig.add_trace(go.Pie(labels=labels_zoekterm, values=data_zoekterm),
