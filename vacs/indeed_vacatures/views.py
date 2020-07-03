@@ -165,9 +165,9 @@ def dashboard(request):
                     )
                 ],
                 'layout': go.Layout(
-                    title = 'Random Data Scatterplot',
-                    xaxis = {'title': 'Some random x-values'},
-                    yaxis = {'title': 'Some random y-values'},
+                    title = 'Locaties',
+                    xaxis = {'title': 'locatie'},
+                    yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
 
@@ -183,9 +183,9 @@ def dashboard(request):
                     )
                 ],
                 'layout': go.Layout(
-                    title = 'Random Data Scatterplot',
-                    xaxis = {'title': 'Some random x-values'},
-                    yaxis = {'title': 'Some random y-values'},
+                    title = 'Bedrijven',
+                    xaxis = {'title': 'bedrijf'},
+                    yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
 
@@ -202,8 +202,8 @@ def dashboard(request):
                 ],
                 'layout': go.Layout(
                     title = 'Random Data Scatterplot',
-                    xaxis = {'title': 'Some random x-values'},
-                    yaxis = {'title': 'Some random y-values'},
+                    xaxis = {'title': 'date'},
+                    yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
 
@@ -219,9 +219,9 @@ def dashboard(request):
                     )
                 ],
                 'layout': go.Layout(
-                    title = 'Random Data Scatterplot',
-                    xaxis = {'title': 'Some random x-values'},
-                    yaxis = {'title': 'Some random y-values'},
+                    title = 'Skills data engineering',
+                    xaxis = {'title': 'skills'},
+                    yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
 
@@ -237,9 +237,9 @@ def dashboard(request):
                     )
                 ],
                 'layout': go.Layout(
-                    title = 'Random Data Scatterplot',
-                    xaxis = {'title': 'Some random x-values'},
-                    yaxis = {'title': 'Some random y-values'},
+                    title = 'Skills data scientist',
+                    xaxis = {'title': 'skills'},
+                    yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
 
@@ -248,18 +248,19 @@ def dashboard(request):
                                     go.Pie(labels=labels_site, values=data_site
 
                                     )],
-                                    'layout':go.Layout(title='my scatterplot',
-                                                        xaxis={'title': 'some x title'})}
+                                    'layout':go.Layout(title='site',
+                                                        xaxis={'title': 'aantal'})}
                                     ),
 
         dcc.Graph(id='pie2',
                             figure={'data':[
                                 go.Pie(labels=labels_zoekterm, values=data_zoekterm
                                 )],
-                                'layout':go.Layout(title='my scatterplot',
-                                                    xaxis={'title': 'some x title'})}
+                                'layout':go.Layout(title='zoektermen',
+                                                    xaxis={'title': 'aantal'})}
         
-    )]))
+    )])
+
 
 
     app.run_server(debug=True, use_reloader=False) 
