@@ -21,7 +21,6 @@ from plotly.offline import plot
 from plotly.subplots import make_subplots
 
 from .models import JobPost
-from .naar_coordinaten import coord
 from .scraper_indeed import scrape as execute_scrape
 from .skills_vacatures import skills
 from .tables import ScraperTable
@@ -106,6 +105,7 @@ def dashboard(request):
         labels_zoekterm.append(term['zoekterm'])
         data_zoekterm.append(term['count'])
 
+
     labels_bedrijf = []
     data_bedrijf = []
     queryset_bedrijf = JobPost.objects.values('bedrijf').order_by('bedrijf').annotate(count=Count('bedrijf'))
@@ -129,6 +129,14 @@ def dashboard(request):
         labels_plaats.append(p['plaats'])
         data_plaats.append(p['count'])
 
+
+    labels_date = []
+    data_date = []
+    queryset_date = JobPost.objects.values('updated_at').order_by('updated_at').annotate(count=Count('updated_at'))
+    for dat in queryset_date:
+        labels_date.append(dat['updated_at'])
+        data_date.append(dat['count'])
+
     filter_woorden = skills()
 
     keys_scientist = filter_woorden[0].keys()
@@ -139,42 +147,120 @@ def dashboard(request):
     values_engineer = filter_woorden[1].values()
 
     
-    fig = make_subplots(
-        rows=3, cols=2,
-        specs=[[{"type": "bar"}, {"type": "pie"}],
-            [{"type": "pie"}, {"type": "bar"}],
-            [{"type": "bar"}, {"type": "bar"}]],
-    )
-
-    fig.add_trace(go.Bar(x=labels_bedrijf,y=data_bedrijf),
-                row=1, col=1)
-
-    fig.add_trace(go.Pie(labels=labels_site, values=data_site),
-                row=1, col=2)
-            
-
-    fig.add_trace(go.Pie(labels=labels_zoekterm, values=data_zoekterm),
-                row=2, col=1)
-
-    fig.add_trace(go.Bar(x=labels_plaats,y=data_plaats),
-                row=2, col=2).update_xaxes(categoryorder="total descending")
-
-    
-    fig.add_trace(go.Bar(x=[k for k in keys_engineer],y=[float(v) for v in values_engineer]),
-                row=3, col=1).update_xaxes(categoryorder="total descending")
-
-
-    fig.add_trace(go.Bar(x=[k for k in keys_scientist],y=[float(v) for v in values_scientist]),
-                row=3, col=2).update_xaxes(categoryorder="total descending")
-
-
-    fig.update_layout(height=2000, width=1700,
-                  title_text="Scraper vacaturesites visualisaties")
-
+  
     app = dash.Dash()
-    app.layout = html.Div([
-        dcc.Graph(figure=fig)
-    ])
+
+    colors = {'background': '#111111', 'text': '#7FDBFF'}
+
+    app.layout = html.Div(style={'backgroundColor': colors['background']},children=[
+        
+        dcc.Graph(
+            id='Bar1',
+            figure={
+                'data': [
+                    go.Bar(x=labels_plaats,
+                    y=data_plaats,marker=dict(color='red')
+
+                        
+                    )
+                ],
+                'layout': go.Layout(
+                    title = 'Random Data Scatterplot',
+                    xaxis = {'title': 'Some random x-values'},
+                    yaxis = {'title': 'Some random y-values'},
+                    hovermode='closest')}
+        ),
+
+        dcc.Graph(
+            id='Bar2',
+            figure={
+                'data': [
+                    go.Bar(
+                        x = labels_bedrijf,
+                        y = data_bedrijf,
+                        marker=dict(color='purple')
+                        
+                    )
+                ],
+                'layout': go.Layout(
+                    title = 'Random Data Scatterplot',
+                    xaxis = {'title': 'Some random x-values'},
+                    yaxis = {'title': 'Some random y-values'},
+                    hovermode='closest')}
+        ),
+
+        dcc.Graph(
+            id='scat1',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x = labels_date,
+                        y = data_date,
+                        marker=dict(color='purple')
+                        
+                    )
+                ],
+                'layout': go.Layout(
+                    title = 'Random Data Scatterplot',
+                    xaxis = {'title': 'Some random x-values'},
+                    yaxis = {'title': 'Some random y-values'},
+                    hovermode='closest')}
+        ),
+
+        dcc.Graph(
+            id='Bar3',
+            figure={
+                'data': [
+                    go.Bar(
+                        x=[k for k in keys_engineer],
+                        y=[float(v) for v in values_engineer],
+                        marker=dict(color='violet')
+                        
+                    )
+                ],
+                'layout': go.Layout(
+                    title = 'Random Data Scatterplot',
+                    xaxis = {'title': 'Some random x-values'},
+                    yaxis = {'title': 'Some random y-values'},
+                    hovermode='closest')}
+        ),
+
+        dcc.Graph(
+            id='Bar4',
+            figure={
+                'data': [
+                    go.Bar(
+                        x=[k for k in keys_scientist],
+                        y=[float(v) for v in values_scientist],
+                        marker=dict(color='crimson')
+                        
+                    )
+                ],
+                'layout': go.Layout(
+                    title = 'Random Data Scatterplot',
+                    xaxis = {'title': 'Some random x-values'},
+                    yaxis = {'title': 'Some random y-values'},
+                    hovermode='closest')}
+        ),
+
+        dcc.Graph(id='pie',
+                                figure={'data':[
+                                    go.Pie(labels=labels_site, values=data_site
+
+                                    )],
+                                    'layout':go.Layout(title='my scatterplot',
+                                                        xaxis={'title': 'some x title'})}
+                                    ),
+
+        dcc.Graph(id='pie2',
+                            figure={'data':[
+                                go.Pie(labels=labels_zoekterm, values=data_zoekterm
+                                )],
+                                'layout':go.Layout(title='my scatterplot',
+                                                    xaxis={'title': 'some x title'})}
+        
+    )]))
+
 
     app.run_server(debug=True, use_reloader=False) 
 
