@@ -25,7 +25,7 @@ from .skills_vacatures import skills
 from .tables import ScraperTable
 
 
-
+# functie aanroepen van ScraperTable om een tabel te maken van de database
 class ScraperListView(SingleTableView):
     model = JobPost
     table_class = ScraperTable
@@ -39,7 +39,7 @@ def scrape(request):
     execute_scrape()
     return JsonResponse({"message": "De site is nu gescraped"})
 
-
+# functie voor het exporteren van de database naar csv bestand
 def export_scraper_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="scraper_indeed.csv"'
@@ -55,10 +55,11 @@ def export_scraper_csv(request):
 
 
 
-# functie voor dashboard
+# functie voor creeeren van de dashboard
 def index(request):
 
-# ophalen en bewerken van de data uit de database 
+## ophalen en bewerken van de data uit de database 
+# Query: tellen van aantal vacatures van data scientist en van data engineering
     labels_zoekterm = []
     data_zoekterm = []
     queryset_zoekterm = JobPost.objects.values('zoekterm').order_by('zoekterm').annotate(count=Count('zoekterm'))
@@ -67,6 +68,7 @@ def index(request):
         data_zoekterm.append(term['count'])
 
 
+# Query: tellen van aantal vacatures per bedrijf
     labels_bedrijf = []
     data_bedrijf = []
     queryset_bedrijf = JobPost.objects.values('bedrijf').order_by('bedrijf').annotate(count=Count('bedrijf'))
@@ -74,7 +76,7 @@ def index(request):
         labels_bedrijf.append(bedrijf['bedrijf'])
         data_bedrijf.append(bedrijf['count'])
 
-
+#Query: tellen van aantal vacatures per site
     labels_site = []
     data_site = []
     queryset_site = JobPost.objects.values('site').order_by('site').annotate(count=Count('site'))
@@ -83,6 +85,7 @@ def index(request):
         data_site.append(s['count'])
 
 
+#Query: tellen van aantal vacatures per plaats
     labels_plaats = []
     data_plaats = []
     queryset_plaats = JobPost.objects.values('plaats').order_by('plaats').annotate(count=Count('plaats'))
@@ -90,7 +93,7 @@ def index(request):
         labels_plaats.append(p['plaats'])
         data_plaats.append(p['count'])
 
-
+#Query: tellen van aantal vacatures per datum
     labels_date = []
     data_date = []
     queryset_date = JobPost.objects.values('updated_at').order_by('updated_at').annotate(count=Count('updated_at'))
@@ -98,6 +101,8 @@ def index(request):
         labels_date.append(dat['updated_at'])
         data_date.append(dat['count'])
 
+
+#Query: skills die gezocht worden voor data scientist en data engineering
     filter_woorden = skills()
 
     keys_scientist = filter_woorden[0].keys()
@@ -111,10 +116,13 @@ def index(request):
   # opzetten van de Dash dashboard
     app = dash.Dash()
 
+# kleuren die gebruikt worden in de dashboard
     colors = {'background': '#111111', 'text': '#7FDBFF'}
 
+# layout van de app
     app.layout = html.Div(style={'backgroundColor': colors['background']},children=[
         
+        # barpolot van locaties
         dcc.Graph(
             id='Bar1',
             figure={
@@ -132,6 +140,7 @@ def index(request):
                     hovermode='closest')}
         ),
 
+        # barpolot van bedrijven
         dcc.Graph(
             id='Bar2',
             figure={
@@ -149,7 +158,7 @@ def index(request):
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
-
+        # scatterplot van datums
         dcc.Graph(
             id='scat1',
             figure={
@@ -167,7 +176,7 @@ def index(request):
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
-
+# barplot van skills voor data engineering
         dcc.Graph(
             id='Bar3',
             figure={
@@ -185,7 +194,7 @@ def index(request):
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
-
+# barplot van skills voor data scientist
         dcc.Graph(
             id='Bar4',
             figure={
@@ -203,7 +212,7 @@ def index(request):
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
-
+# piechart voor aantal vacatures per site
         dcc.Graph(id='pie',
                                 figure={'data':[
                                     go.Pie(labels=labels_site, values=data_site
@@ -212,7 +221,7 @@ def index(request):
                                     'layout':go.Layout(title='site',
                                                         xaxis={'title': 'aantal'})}
                                     ),
-
+# piechart voor aantal zoektermen 'data scientist' en 'data engineering' 
         dcc.Graph(id='pie2',
                             figure={'data':[
                                 go.Pie(labels=labels_zoekterm, values=data_zoekterm
