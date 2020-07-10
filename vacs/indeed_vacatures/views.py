@@ -1,6 +1,6 @@
+# packages
 import csv
 import time
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -19,62 +19,20 @@ from django_tables2 import SingleTableView
 from plotly.graph_objs import Bar, Scatter
 from plotly.offline import plot
 from plotly.subplots import make_subplots
-
 from .models import JobPost
 from .scraper_indeed import scrape as execute_scrape
 from .skills_vacatures import skills
 from .tables import ScraperTable
 
-# Create your views here.
+
 
 class ScraperListView(SingleTableView):
     model = JobPost
     table_class = ScraperTable
     template_name = 'indeed_vacatures/table.html'
 
-def index(request):
 
-    
-
-    filter_woorden = skills()
-
-    keys_scientist = filter_woorden[0].keys()
-    values_scientist = filter_woorden[0].values()
-
-    
-    keys_engineer = filter_woorden[1].keys()
-    values_engineer = filter_woorden[1].values()
-
-    external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-    app.layout = html.Div(children=[
-        html.H1(children='Hello Dash'),
-
-        html.Div(children='''
-            Dash: A web application framework for Python.
-        '''),
-
-        dcc.Graph(
-            id='example-graph',
-            figure={
-                'data': [
-                    {'x': [k for k in keys_scientist], 'y': [float(v) for v in values_scientist], 'type': 'bar', 'name': 'data scientist'},
-                    {'x': [k for k in keys_engineer], 'y': [float(v) for v in values_engineer], 'type': 'bar', 'name': u'data engineer'},
-                ],
-                'layout': {
-                    'title': 'Skills'
-                }
-            }
-        )
-    ])
-
-    app.run_server(debug=True, use_reloader=False) 
-
-    # aantal = JobPost.objects.all().count()
-    return render(request, "indeed_vacatures/index.html", context={'app': app})
-
+# functie voor het scrapen van de vacaturesites
 def scrape(request):
 
     print('Ik begin nu')
@@ -96,8 +54,11 @@ def export_scraper_csv(request):
     return response
 
 
-def dashboard(request):
 
+# functie voor dashboard
+def index(request):
+
+# ophalen en bewerken van de data uit de database 
     labels_zoekterm = []
     data_zoekterm = []
     queryset_zoekterm = JobPost.objects.values('zoekterm').order_by('zoekterm').annotate(count=Count('zoekterm'))
@@ -147,7 +108,7 @@ def dashboard(request):
     values_engineer = filter_woorden[1].values()
 
     
-  
+  # opzetten van de Dash dashboard
     app = dash.Dash()
 
     colors = {'background': '#111111', 'text': '#7FDBFF'}
@@ -201,7 +162,7 @@ def dashboard(request):
                     )
                 ],
                 'layout': go.Layout(
-                    title = 'Random Data Scatterplot',
+                    title = 'aantal vacatures',
                     xaxis = {'title': 'date'},
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
@@ -265,5 +226,5 @@ def dashboard(request):
 
     app.run_server(debug=True, use_reloader=False) 
 
-    return render(request, "indeed_vacatures/dashboard.html", context={'app': app})
+    return render(request, "indeed_vacatures/index.html", context={'app': app})
 
