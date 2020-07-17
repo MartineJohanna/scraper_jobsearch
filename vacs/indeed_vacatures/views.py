@@ -121,7 +121,7 @@ def index(request):
 
 # layout van de app
     app.layout = html.Div(style={'backgroundColor': colors['background']},children=[
-        
+
         # barpolot van locaties
         dcc.Graph(
             id='Bar1',
@@ -135,7 +135,7 @@ def index(request):
                 ],
                 'layout': go.Layout(
                     title = 'Locaties',
-                    xaxis = {'title': 'locatie'},
+                    xaxis = {'title': 'locatie','categoryorder':'total descending'},
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
@@ -154,7 +154,7 @@ def index(request):
                 ],
                 'layout': go.Layout(
                     title = 'Bedrijven',
-                    xaxis = {'title': 'bedrijf'},
+                    xaxis = {'title': 'bedrijf','categoryorder':'total descending'},
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
@@ -212,6 +212,8 @@ def index(request):
                     yaxis = {'title': 'aantal'},
                     hovermode='closest')}
         ),
+
+        
 # piechart voor aantal vacatures per site
         dcc.Graph(id='pie',
                                 figure={'data':[
