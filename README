@@ -1,5 +1,6 @@
 Gebruik van de app:
 
+* pip install -r requirements.txt
 * CMD: python manage.py runserver;
 * voor het scrapen van de vacaturessites: localhost:8000/scrape. In de command kun je zien welke titels hij aan het scrapen is;
 * Om de database in te zien: localhost:8000/table of localhost:8000/admin;
