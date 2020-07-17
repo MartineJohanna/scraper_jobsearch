@@ -1,0 +1,8 @@
+Gebruik van de app:
+
+* CMD: python manage.py runserver;
+* voor het scrapen van de vacaturessites: localhost:8000/scrape. In de command kun je zien welke titels hij aan het scrapen is;
+* Om de database in te zien: localhost:8000/table of localhost:8000/admin;
+* Om een export te maken van de database: localhost:8000/export;
+* Om de dasboard te bekijken: localhost:8000, en vervolgens opent hij de app in localhost:8050;
+
