@@ -7,3 +7,13 @@ Gebruik van de app:
 * Om een export te maken van de database: localhost:8000/export;
 * Om de dasboard te bekijken: localhost:8000, en vervolgens opent hij de app in localhost:8050;
 
+--------------------------------------------------------------------------------------------------
+
+Using the app:
+
+* pip install -r requirements.txt
+* CMD: python manage.py runserver;
+* for scraping the job sites: localhost: 8000 / scrape. In the command you can see which titles he is scraping;
+* To view the database: localhost: 8000 / table or localhost: 8000 / admin;
+* To make an export from the database: localhost: 8000 / export;
+* To view the dashboard: localhost: 8000, then open the app in localhost: 8050;
